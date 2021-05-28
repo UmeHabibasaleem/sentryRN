@@ -16,6 +16,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Button,
 } from 'react-native';
 
 import {
@@ -25,68 +26,40 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import * as Sentry from '@sentry/react-native';
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+Sentry.init({
+  dsn: "https://ad67b323599a4594a3a08117e966517a@o739669.ingest.sentry.io/5785919",
+  /*integrations: [
+    new Sentry.ReactNativeTracing({
+      tracingOrigins: ["localhost", "my-site-url.com", /^\//],
+    }),
+  ],*/
+})
 
+
+const sentryTest =() =>{
+  try{
+    let obj = {name:'abc', age:'23'}
+    const displayName = "CoolComponent";
+    throw new Error("Error");
+    console.log('try', displayName)
+  }catch (e) {
+    console.log('else catch')
+    Sentry.setContext("character", {
+      name: "Mighty Fighter",
+      age: 19,
+      attack_type: "melee",
+    });
+    Sentry.captureException(new Error("error form RNSentry"));
+
+  }
+}
 const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <View style={{justifyContent: "space-around" , flex: 1}}>
+    <Button onPress={sentryTest} title="open camera picker" color="#841584" />
+  </View>
   );
 };
 
